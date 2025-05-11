@@ -13,6 +13,18 @@ export class TodoComponent implements OnInit {
   tasks: {text: string, done: boolean}[] = [];
   newTask: string = '';   // Це змінна для введення нового завдання
 
+  filter: 'all' | 'done' | 'undone' = 'all';
+
+  get filteredTasks() {
+    if(this.filter === 'done') {
+      return this.tasks.filter(task => task.done)
+    }
+    else if (this.filter === 'undone') {
+      return this.tasks.filter(task => !task.done)
+    };
+    return this.tasks;
+  };
+
   addTask() {
     if (this.newTask.trim()) {
       this.tasks.push({ text: this.newTask.trim(), done: false });
