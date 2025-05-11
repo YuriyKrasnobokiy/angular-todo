@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';  // Імпортуємо CommonModule
 
@@ -6,21 +6,40 @@ import { CommonModule } from '@angular/common';  // Імпортуємо CommonM
   selector: 'app-todo',
   templateUrl: './todo.component.html',
   imports: [FormsModule, CommonModule], 
-  styleUrl: './todo.component.scss',
+  styleUrl: './todo.component.css',
   standalone: true
 })
-export class TodoComponent {
-  tasks: string[] = [];  // Це масив для збереження завдань
+export class TodoComponent implements OnInit {
+  tasks: {text: string, done: boolean}[] = [];
   newTask: string = '';   // Це змінна для введення нового завдання
 
-  addTask(): void {
-    if (this.newTask.trim()) {        // Перевіряємо, чи не порожнє завдання
-      this.tasks.push(this.newTask);  // Додаємо нове завдання до списку
-      this.newTask = '';              // Очищаємо поле вводу
+  addTask() {
+    if (this.newTask.trim()) {
+      this.tasks.push({ text: this.newTask.trim(), done: false });
+      this.newTask = '';
+      this.saveTasks();
     }
   }
-
-  removeTask(index: number): void {
+  
+  removeTask(index: number) {
     this.tasks.splice(index, 1);
+    this.saveTasks();
+  }
+  
+  toggleDone() {
+    this.saveTasks();
+  }
+  
+  saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(this.tasks));
+  }
+
+  ngOnInit() {
+    const storedTasks = localStorage.getItem('tasks');
+    if (storedTasks) {
+      this.tasks = JSON.parse(storedTasks);
+    }
   }
 }
+
+
